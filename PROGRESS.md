@@ -5,12 +5,12 @@
 - [x] Refactor `snake.py` to use `engine.SnakeGame` (rendering/HUD/pause/highscore unchanged)
 - [x] `tests/test_engine.py` — 15 tests, all passing (`.venv/bin/python -m pytest tests/ -q`)
 - [x] Manual check: `SDL_VIDEODRIVER=dummy python snake.py` runs its loop cleanly (no display attached to this session; logic engine-backed and unit-tested)
-- [ ] Commit
+- [x] Commit
 
 ## Phase 2: Agent — observations and neural net
-- [ ] Create `agent.py` (`observe()`, `NeuralNet`)
-- [ ] `tests/test_agent.py` passing
-- [ ] Commit
+- [x] Create `agent.py` (`observe()`, `NeuralNet`, `play_game()` helper)
+- [x] `tests/test_agent.py` — 11 tests; full suite 26 passing
+- [x] Commit
 
 ## Phase 3: GA training loop
 - [ ] Create `train.py` (tournament selection, elitism, crossover, Gaussian mutation, multiprocessing)
