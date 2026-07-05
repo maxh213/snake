@@ -10,7 +10,7 @@ import argparse
 import csv
 import os
 import time
-from multiprocessing import Pool
+from multiprocessing import get_context
 
 import numpy as np
 
@@ -83,7 +83,9 @@ def main():
     population = [rng.normal(0.0, 1.0, size=genome_size) for _ in range(args.pop)]
 
     best_fitness_ever = -np.inf
-    pool = Pool(args.workers) if args.workers > 1 else None
+    pool = None
+    if args.workers > 1 and not args.render:
+        pool = get_context("spawn").Pool(args.workers)
     mapper = pool.map if pool else map
 
     with open(csv_path, "w", newline="") as f:
