@@ -60,7 +60,18 @@ def main():
     parser.add_argument("--workers", type=int, default=os.cpu_count())
     parser.add_argument("--out", type=str, default=None,
                         help="output dir (default runs/<timestamp>)")
+    parser.add_argument("--render", action="store_true",
+                        help="replay each generation's best genome in a pygame window")
+    parser.add_argument("--render-fps", type=int, default=30,
+                        help="replay speed when --render is on")
+    parser.add_argument("--render-every", type=int, default=1,
+                        help="replay only every Nth generation")
     args = parser.parse_args()
+
+    renderer = None
+    if args.render:
+        from render_gen import GenerationRenderer
+        renderer = GenerationRenderer(fps=args.render_fps)
 
     out_dir = args.out or os.path.join("runs", time.strftime("%Y%m%d-%H%M%S"))
     os.makedirs(out_dir, exist_ok=True)
@@ -99,6 +110,12 @@ def main():
                 if best > best_fitness_ever:
                     best_fitness_ever = best
                     np.save(best_path, population[best_idx])
+
+                if renderer and gen % args.render_every == 0:
+                    if not renderer.replay(population[best_idx], seeds[0], gen, best):
+                        print("render window closed; continuing headless")
+                        renderer.close()
+                        renderer = None
 
                 order = np.argsort(fitnesses)[::-1]
                 next_pop = [population[i].copy() for i in order[: args.elitism]]
