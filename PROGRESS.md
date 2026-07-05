@@ -13,14 +13,14 @@
 - [x] Commit
 
 ## Phase 3: GA training loop
-- [ ] Create `train.py` (tournament selection, elitism, crossover, Gaussian mutation, multiprocessing)
-- [ ] Smoke run: `train.py --pop 20 --generations 2 --workers 2 --seed 42 --out runs/smoke` (<60s, fitness.csv + best.npy)
-- [ ] Commit
+- [x] Create `train.py` (tournament selection, elitism, crossover, Gaussian mutation, multiprocessing)
+- [x] Smoke run: `train.py --pop 20 --generations 2 --workers 2 --seed 42 --out runs/smoke` — 5.2s, fitness.csv (3 lines) + best.npy
+- [x] Commit
 
 ## Phase 4: Visualization
-- [ ] `watch.py` replays saved genome in pygame window
-- [ ] `plot_fitness.py` writes fitness.png (Agg backend)
-- [ ] Commit
+- [x] `watch.py` replays saved genome in pygame window (verified with SDL_VIDEODRIVER=dummy; ran cleanly, killed by timeout as expected since it renders until Q)
+- [x] `plot_fitness.py` writes fitness.png (Agg backend, no display)
+- [x] Commit
 
 ## Phase 5: Full training run
 - [ ] `evaluate.py`
