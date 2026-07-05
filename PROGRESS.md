@@ -23,10 +23,16 @@
 - [x] Commit
 
 ## Phase 5: Full training run
-- [ ] `evaluate.py`
-- [ ] Full training to mean ≥ 200 over 20 games (or documented plateau)
-- [ ] `results/best.npy`, `results/fitness.csv`, `results/fitness.png`
-- [ ] Final verification + commit
+- [x] `evaluate.py`
+- [x] Full training: pop 200, 300 generations, seed 1 (defaults) — target hit on first run
+- [x] `results/best.npy`, `results/fitness.csv`, `results/fitness.png`
+- [x] Final verification + commit
+
+## Final results
+- `evaluate.py results/best.npy --games 20 --threshold 200` → **mean 455.5** (min 150, max 760), exit 0.
+- Target (mean ≥ 200) was already exceeded by generation ~27 (eval mean 298); full 300-gen run reached best fitness ~794k (~790 score in-training).
+- Fitness curve (`results/fitness.png`) shows steady best/mean improvement across generations.
+- Full test suite: 26 passing. `engine.py` has zero pygame references.
 
 ## Decisions & Notes
 - **Python 3.14 + pygame 2.6.1 is broken** (`pygame.font` circular import). Replaced with `pygame-ce` 2.5.7 in `.venv` — drop-in compatible, `import pygame` unchanged.
