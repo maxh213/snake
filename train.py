@@ -61,17 +61,12 @@ def main():
     parser.add_argument("--out", type=str, default=None,
                         help="output dir (default runs/<timestamp>)")
     parser.add_argument("--render", action="store_true",
-                        help="replay each generation's best genome in a pygame window")
-    parser.add_argument("--render-fps", type=int, default=30,
+                        help="replay selected generations' best genome in a pygame window")
+    parser.add_argument("--render-fps", type=int, default=60,
                         help="replay speed when --render is on")
-    parser.add_argument("--render-every", type=int, default=1,
-                        help="replay only every Nth generation")
+    parser.add_argument("--render-every", type=int, default=5,
+                        help="replay every Nth generation")
     args = parser.parse_args()
-
-    renderer = None
-    if args.render:
-        from render_gen import GenerationRenderer
-        renderer = GenerationRenderer(fps=args.render_fps)
 
     out_dir = args.out or os.path.join("runs", time.strftime("%Y%m%d-%H%M%S"))
     os.makedirs(out_dir, exist_ok=True)
@@ -83,10 +78,12 @@ def main():
     population = [rng.normal(0.0, 1.0, size=genome_size) for _ in range(args.pop)]
 
     best_fitness_ever = -np.inf
-    pool = None
-    if args.workers > 1 and not args.render:
-        pool = get_context("spawn").Pool(args.workers)
+    # spawn context avoids inheriting pygame state into workers
+    n_workers = max(1, args.workers)
+    pool = get_context("spawn").Pool(n_workers) if n_workers > 1 else None
     mapper = pool.map if pool else map
+
+    renderer = None
 
     with open(csv_path, "w", newline="") as f:
         writer = csv.writer(f)
@@ -113,7 +110,10 @@ def main():
                     best_fitness_ever = best
                     np.save(best_path, population[best_idx])
 
-                if renderer and gen % args.render_every == 0:
+                if args.render and gen % args.render_every == 0:
+                    if renderer is None:
+                        from render_gen import GenerationRenderer
+                        renderer = GenerationRenderer(fps=args.render_fps)
                     if not renderer.replay(population[best_idx], seeds[0], gen, best):
                         print("render window closed; continuing headless")
                         renderer.close()
@@ -132,6 +132,8 @@ def main():
             if pool:
                 pool.close()
                 pool.join()
+            if renderer:
+                renderer.close()
 
     print(f"done. best fitness {best_fitness_ever:.1f}; genome saved to {best_path}")
 

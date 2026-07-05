@@ -3,6 +3,8 @@
 Used by train.py --render. Replays the genome on the same seed the
 generation was evaluated with, so you see exactly the game that earned
 the fitness score.
+
+Keys: Q = quit, SPACE = skip to next generation.
 """
 
 import pygame
@@ -11,11 +13,12 @@ import engine
 import snake as ui
 from agent import NeuralNet, observe
 
-MAX_REPLAY_STEPS = 2000
+MAX_REPLAY_STEPS = 500
+STARVATION_LIMIT = 80
 
 
 class GenerationRenderer:
-    def __init__(self, fps=30):
+    def __init__(self, fps=60):
         self.fps = fps
         pygame.init()
         self.screen = pygame.display.set_mode((ui.SCREEN_WIDTH, ui.SCREEN_HEIGHT))
@@ -38,7 +41,7 @@ class GenerationRenderer:
                     elif event.key == pygame.K_SPACE:
                         skip = True
 
-            if game.steps_since_food >= 500:
+            if game.steps_since_food >= STARVATION_LIMIT:
                 break
             game.step(net.act(observe(game)))
 
